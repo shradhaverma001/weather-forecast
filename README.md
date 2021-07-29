@@ -1,7 +1,7 @@
 # weather-forecast
 
 # How to run this code
-Run using python weather_forecase.py
+Run using python weather_forecast.py
 
 -> User needs to select any of the 2 options by selecting 1 or 2
 -> In the first choice, the user gets to know the current weather by entering the Latitude and Longitude of the location.
