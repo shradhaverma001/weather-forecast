@@ -1,7 +1,7 @@
 # weather-forecast
 
 # How to run code
- * ```python3 weather_forecast.py```
+ * ```python weather_forecast.py```
 
 # Information
  * User needs to select any of the 2 options by selecting 1 or 2
