@@ -16,6 +16,7 @@ print(
 
 print(
 '''Please Select among these options
+0 :=> to quit
 1 :=> for latitude and longitude
 2 :=> for city and date(YYYY-MM-DD) for scheduled flight
 '''
@@ -45,23 +46,47 @@ def getLatLong(cityName):
     }
 
 
-def getCurrentWeather():
-    url = "http://api.openweathermap.org/data/2.5/weather?appid=" + config['apiKey']
-    params = {
-        "lat":lat,
-        "lon":lon
-    }
-    response = requests.get(url,params=params)
-    data = response.json()
-    print('')
-    print("Today's Weather Conditions")
-    print('')
-    print(f'Humidity: {data["main"]["humidity"]}')
-    print(f'Pressure: {data["main"]["pressure"]}')
-    print(f'Average Temperature: {data["main"]["temp"]}')
-    print(f'Wind Speed: {data["wind"]["speed"]}')
-    print(f'Wind Degree: {data["wind"]["deg"]}')
-    print('UV Index: Not available in API ')
+# def getCurrentWeather():
+#     url = "http://api.openweathermap.org/data/2.5/weather?appid=" + config['apiKey']
+#     params = {
+#         "lat":lat,
+#         "lon":lon
+#     }
+#     response = requests.get(url,params=params)
+#     data = response.json()
+#     print('')
+#     print("Today's Weather Conditions")
+#     print('')
+#     print(f'Humidity: {data["main"]["humidity"]}')
+#     print(f'Pressure: {data["main"]["pressure"]}')
+#     print(f'Average Temperature: {data["main"]["temp"]}')
+#     print(f'Wind Speed: {data["wind"]["speed"]}')
+#     print(f'Wind Degree: {data["wind"]["deg"]}')
+#     print('UV Index: Not available in API ')
+#     print("")
+
+class today:
+    def __init__(self,lat,lon,test):
+        self.lat=lat
+        self.lon=lon
+    def getCurrentWeather(self):
+        url = "http://api.openweathermap.org/data/2.5/weather?appid=" + config['apiKey']
+        params = {
+            "lat":lat,
+            "lon":lon
+        }
+        response = requests.get(url,params=params)
+        data = response.json()
+        print('')
+        print("Today's Weather Conditions")
+        print('')
+        print(f'Humidity: {data["main"]["humidity"]}')
+        print(f'Pressure: {data["main"]["pressure"]}')
+        print(f'Average Temperature: {data["main"]["temp"]}')
+        print(f'Wind Speed: {data["wind"]["speed"]}')
+        print(f'Wind Degree: {data["wind"]["deg"]}')
+        print('UV Index: Not available in API ')
+        print("")
 
 def getHistoryWeather(lat, lon, timestamp):
     # print(lat)
@@ -82,6 +107,7 @@ def getHistoryWeather(lat, lon, timestamp):
     print(f'Wind Speed: {data["current"]["wind_speed"]}')
     print(f'Wind Degree: {data["current"]["wind_deg"]}')
     print(f'UV Index: {data["current"]["uvi"]} ')
+    print("")
 
 
 def getFutureForecast(lat,lon):
@@ -96,11 +122,11 @@ def getFutureForecast(lat,lon):
     # print(params['exclude'])
     response = requests.get(url,params=params)
     data = response.json()
+    
     # print(response.json())
     for i in range(1,3):
         print(f'Forecast of the upcoming day {i} is: ')
-        print(f'date: {data["daily"][i]["dt"]}')
-
+        print(f'date: {datetime.datetime.fromtimestamp(data["daily"][i]["dt"]).strftime("%c")}')
         print(f'Humidity: {data["daily"][i]["humidity"]}')
         print(f'Pressure: {data["daily"][i]["pressure"]}')
         print(f'Average Temperature: {data["daily"][i]["temp"]["min"]} (showing minimum temp.)')
@@ -109,44 +135,69 @@ def getFutureForecast(lat,lon):
         print(f'UV Index: {data["daily"][i]["uvi"]} ')
         print("")
     
+# def check(value):
+#     switch()
 
 
-print("Enter the choice: ")
 
-x = int(input())
-if(x == 1):
-    print('Enter Latitude: ')
-    lat=input()
-    print('Enter Longitude: ')
-    lon=input()
-    getCurrentWeather()
-if(x == 2):
-    print('Enter City: ')
-    city=input()
-    print('Enter Date(YYYY-MM-DD): ')
-    d=input()
-    print("")
+while True:
+    print("Enter the choice: ")
+    try:
+        x = int(input())
+    except ValueError:
+        print("Please enter a valid input!")
+        continue
 
-    # -----start of previous 2 day data
+    if x == 0:
+        break
+    
+    if(x == 1):
+        print('Enter Latitude: ')
+        lat=input()
+        print('Enter Longitude: ')
+        lon=input()
+        obj1=today(lat,lon,{'apiKey': '398c381047e6ad14ff4d2ebb7f560c08'})
+        obj1.getCurrentWeather()
+    elif(x == 2):
+        print('Enter City: ')
+        city=input()
+        print('Enter Date(YYYY-MM-DD): ')
+        d=input()
+        print("")
 
-    # get previous 2 days data
-    latLongDict = getLatLong(city)
-    # previous day1
-    print("Forecast of previous day before the entered date")
-    previous1Time = getPreviousDateTime(d, 1)
-    getHistoryWeather(latLongDict['lat'],latLongDict['lon'],previous1Time)
+        # -----start of previous 2 day data
 
-    # previous day2
-    print("")
-    print("Forecast of previous day 2")
-    previous2Time = getPreviousDateTime(d, 2)
-    getHistoryWeather(latLongDict['lat'],latLongDict['lon'],previous2Time)
+        # get previous 2 days data
+        latLongDict = getLatLong(city)
+        # previous day1
+        print("Forecast of previous day before the entered date")
+        previous1Time = getPreviousDateTime(d, 1)
+        getHistoryWeather(latLongDict['lat'],latLongDict['lon'],previous1Time)
 
-    print("")
-    # ------end of previous 2 day data
+        # previous day2
+        print("")
+        print("Forecast of previous day 2")
+        previous2Time = getPreviousDateTime(d, 2)
+        getHistoryWeather(latLongDict['lat'],latLongDict['lon'],previous2Time)
 
-    # future days data
-    getFutureForecast(latLongDict['lat'],latLongDict['lon'])
+        print("")
+        # ------end of previous 2 day data
+
+        # future days data
+        getFutureForecast(latLongDict['lat'],latLongDict['lon'])
+
+    else:
+        print("Please enter a valid input!")
+
+
+
+
+# TODO:FAILURE CONDITIONS
+# PREVIOUS DATE NOT ANY DATA
+# DECISION TO RE ENTER THE INPUT -Done
+# USE CLASSES 
+# MINIMUM 2 TEST CASES FOR BLOG PROJECT
+# 
 
 
 
